@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BackgroundTaskDemo</string>
+    <string name="app_running_background">%s running in background</string>
+</resources>
