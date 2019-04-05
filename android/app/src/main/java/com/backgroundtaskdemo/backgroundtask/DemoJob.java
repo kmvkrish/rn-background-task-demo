@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.util.TimeUtils;
+import java.util.concurrent.TimeUnit;
 
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobManager;
@@ -21,10 +21,10 @@ public class DemoJob extends Job {
     @Override
     protected Result onRunJob(@NonNull Params params) {
 
-        Intent headlessIntent = new Intent();
-        headlessIntent.putExtra("data", "starting background task");
-
         Context context = getContext().getApplicationContext();
+        
+        Intent headlessIntent = new Intent(context, DemoHeadlessTaskService.class);
+        headlessIntent.putExtra("data", "starting background task");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //Since Android Oreo, every background service must be started as foreground service.
             context.startForegroundService(headlessIntent);
@@ -38,7 +38,10 @@ public class DemoJob extends Job {
 
     public static void schedulePeriodicJob() {
         mJobRequest = new JobRequest.Builder(TASK)
-                .setPeriodic(1000)
+                .setPeriodic(
+                        TimeUnit.SECONDS.toMillis(900),
+                        TimeUnit.SECONDS.toMillis(300)
+                  )
                 .build();
 
         mJobRequest.schedule();
